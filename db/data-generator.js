@@ -55,13 +55,33 @@ const randomItemPicker = function(array) {
   return array[generateRandomNumber(0, array.length)];
 };
 
+const stores = [
+  {
+    storeID: 1,
+    storeName: 'Target'
+  },
+  {
+    storeID: 2,
+    storeName: 'Walmart'
+  },
+  {
+    storeID: 3,
+    storeName: 'Walgreens'
+  },
+  {
+    storeID: 4,
+    storeName: 'Costco'
+  }
+]
+
 // Use to generate a random list of items
 const generateItems = function(num) {
   for (let i = 0; i < num; i++) {
+    let randomStore = randomItemPicker(stores);
     let generatedItem = {
       price: generateRandomNumber(1, 3000, 2),
-      storeID: generateRandomNumber(1, 5, 0),
-      storeName: randomItemPicker(['Target', 'Walmart', 'Walgreens', 'Costco']),
+      storeID: randomStore.storeID,
+      storeName: randomStore.storeName,
       storeMinimumFreeShipping: generateRandomNumber(0, 50, 0),
       itemDeliveryTime: generateRandomDate(new Date(2018, 7, 1), new Date(2018, 7, 14))
     };
