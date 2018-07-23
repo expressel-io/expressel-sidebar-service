@@ -1,13 +1,56 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
 version: 2
 jobs:
   build:
+    working_directory: ~/repo
     docker:
-      - image: debian:stretch
+      - image: circleci/node:10.6.0
+      - image: circleci/mysql:5.7.22-ram
+        environment:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_ROOT_PASSWORD: ''
+          MYSQL_DATABASE: items
+
     steps:
       - checkout
+      - run: 
+          name: Install Dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.3.0
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          - v1-dependencies-
+
+      - run: 
+          name: Install npm
+          command: npm install
+
+      - run: 
+          name: Install mysql 
+          command: npm install mysql
+
       - run:
-          name: Greeting
-          command: echo Hello, world.
+          name: Install moment
+          command: npm install moment
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
       - run:
-          name: Print the Current Time
-          command: date
+          name: Wait for DB
+          command: dockerize -wait tcp://127.0.0.1:3306 -timeout 120s
+
+      - run:
+          name: Create and Populate DB
+          command: node unitTesting/database-generator.js 
+
+      # run tests!
+      - run: npm run test
