@@ -84,3 +84,10 @@ const generateItems = function(num) {
 
 // Insert 100 items into the database:
 generateItems(100);
+
+module.exports = {
+  generateRandomNumber,
+  generateRandomDate,
+  randomItemPicker,
+  generateItems
+}
