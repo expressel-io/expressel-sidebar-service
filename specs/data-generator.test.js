@@ -1,4 +1,4 @@
-const dataGenerator = require('../db/data-generator.js');
+const dataGenerator = require('../db/database-generator.js');
 const mysql = require('mysql');
 
 const { generateRandomNumber } = dataGenerator;
